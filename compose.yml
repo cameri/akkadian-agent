@@ -1,0 +1,68 @@
+services:
+  akkadian-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: build
+    command: nest start --watch
+    env_file:
+      - path: .env
+        required: true
+    environment:
+      MONGODB_URI: mongodb://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@${MONGODB_HOST}:${MONGODB_PORT}/${MONGODB_DATABASE}
+    depends_on:
+      akkadian-mongo:
+        condition: service_healthy
+    volumes:
+      - ./src:/app/src
+      - ./nest-cli.json:/app/nest-cli.json
+      - ./tsconfig.json:/app/tsconfig.json
+      - ./package.json:/app/package.json
+    networks:
+      - akkadian-agent
+
+  akkadian-mongo:
+    image: mongodb/mongodb-community-server:8.0.3-ubi8
+    restart: always
+    environment:
+      MONGODB_USERNAME: ${MONGODB_USERNAME}
+      MONGODB_PASSWORD: ${MONGODB_PASSWORD}
+      # MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USERNAME}
+      # MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD}
+
+      MONGO_INITDB_DATABASE: ${MONGODB_DATABASE}
+    volumes:
+      - ./scripts/mongo/init.js:/docker-entrypoint-initdb.d/init.js
+      # - mongo:/data/db
+    networks:
+      - akkadian-agent
+    healthcheck:
+      test:  echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 1m30s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+      start_interval: 5s
+
+  akkadian-mongo-express:
+    image: mongo-express
+    restart: on-failure
+    ports:
+      - 127.0.0.1:8081:8081
+    environment:
+      # ME_CONFIG_MONGODB_URL: mongodb://akkadian-mongo:27017/
+      ME_CONFIG_MONGODB_URL: mongodb://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@${MONGODB_HOST}:${MONGODB_PORT}/${MONGODB_DATABASE}
+      # ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGODB_USERNAME}
+      # ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGODB_PASSWORD}
+      ME_CONFIG_BASICAUTH: 'false'
+    depends_on:
+      akkadian-mongo:
+        condition: service_healthy
+    networks:
+      - akkadian-agent
+
+networks:
+  akkadian-agent:
+
+# volumes:
+  # mongo:

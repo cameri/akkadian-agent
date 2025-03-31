@@ -1,0 +1,17 @@
+.git
+.husky
+dist
+node_modules
+scripts
+test
+.dockerignore
+*.env
+.gitignore
+.nvmrc
+.prettierrc*
+compose.yml
+Dockerfile
+eslint.config.mjs
+nest-cli.json
+*.md
+**/*.spec.ts
