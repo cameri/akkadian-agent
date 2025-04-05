@@ -1,3 +1,5 @@
+export const SimpleRepliesCollectionName = 'simple-replies';
+
 export enum PatternType {
   BeginsWith = 'Begins with',
   Contains = 'Contains',

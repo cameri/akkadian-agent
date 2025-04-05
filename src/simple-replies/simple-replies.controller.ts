@@ -1,11 +1,13 @@
 import { Controller, Logger } from '@nestjs/common';
-import { CommandBus } from '@nestjs/cqrs';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { MessagePattern, Payload } from '@nestjs/microservices';
+import { plainToInstance } from 'class-transformer';
 import { applySpec, construct, match, path, pipe, test } from 'ramda';
 import { Update } from '../transports/telegram/ext/update';
 import { TelegramServerTransport } from '../transports/telegram/telegram.constants';
 import { AddReplyCommand } from './commands/add-reply.command';
 import { RemoveReplyCommand } from './commands/remove-reply.command';
+import { GetReplyQuery } from './queries/get-reply.query';
 import {
   addReplyCommandRegExp,
   removeReplyCommandRegExp,
@@ -29,6 +31,7 @@ const RemoveReplyCommandPattern = pipe(
 export class SimpleRepliesController {
   constructor(
     private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
     private readonly logger: Logger,
   ) {}
 
@@ -75,5 +78,14 @@ export class SimpleRepliesController {
     const command = constructCommand(update);
 
     return this.commandBus.execute(command);
+  }
+
+  @MessagePattern(
+    pipe(path(['effective_message', 'text']), test(/.*/)),
+    TelegramServerTransport,
+  )
+  async handleTextMessage(@Payload() _update: Update): Promise<void> {
+    const query = plainToInstance(GetReplyQuery, {});
+    await this.queryBus.execute(query);
   }
 }

@@ -8,6 +8,8 @@
   "packageManager": "pnpm@8.6.0",
   "scripts": {
     "build": "nest build",
+    "build:check": "tsc --noEmit --pretty",
+    "build:watch": "npm run build -- --watch",
     "format:fix": "npm run format -- --write",
     "format": "prettier \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
@@ -23,9 +25,10 @@
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
     "lint:fix": "npm run lint -- --fix",
-    "test": "jest",
+    "test": "npm run test:unit",
+    "test:unit": "jest",
     "test:watch": "jest --watch",
-    "test:cov": "jest --coverage",
+    "test:unit:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "prepare": "husky"
@@ -37,11 +40,13 @@
     "@nestjs/core": "^11.0.1",
     "@nestjs/cqrs": "^11.0.2",
     "@nestjs/microservices": "^11.0.11",
+    "@nestjs/mongoose": "^11.0.3",
     "@nestjs/platform-express": "^11.0.1",
     "@typegoose/typegoose": "^12.14.0",
     "@types/ramda": "^0.30.2",
     "@types/ws": "^8.18.0",
     "axios": "1.8.4",
+    "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "husky": "^9.1.7",
     "mongoose": "^8.13.0",
@@ -66,8 +71,10 @@
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-prettier": "^5.2.2",
+    "eslint-plugin-tsdoc": "^0.4.0",
     "globals": "^16.0.0",
     "jest": "^29.7.0",
+    "mongodb-memory-server": "^10.1.4",
     "pino-pretty": "^13.0.0",
     "prettier": "^3.4.2",
     "source-map-support": "^0.5.21",
@@ -85,13 +92,27 @@
       "json",
       "ts"
     ],
+    "displayName": {
+      "color": "BLUE",
+      "name": "akkadian-agent"
+    },
+    "coverageThreshold": {
+      "global": {
+        "branches": 80,
+        "functions": 80,
+        "lines": 80,
+        "statements": 80
+      }
+    },
     "rootDir": "src",
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
     "collectCoverageFrom": [
-      "**/*.(t|j)s"
+      "**/*.(t|j)s",
+      "!**/main.ts",
+      "!**/*.(module|types|constants|query|command|event).(t|j)s"
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"

@@ -13,21 +13,21 @@ import { PinoLoggerService } from './pino-logger.service';
         const app = configService.get<string>('APP_NAME') || 'akkadian-agent';
         const format = configService.get<string>('LOG_FORMAT');
 
-        // const transport =
-        //   format === 'pretty'
-        //     ? {
-        //         target: 'pino-pretty',
-        //         options: {
-        //           colorize: true,
-        //           ignore: 'host,app,pid',
-        //           singleLine: true,
-        //         },
-        //       }
-        //     : undefined;
+        const transport =
+          format === 'pretty'
+            ? {
+                target: 'pino-pretty',
+                options: {
+                  colorize: true,
+                  ignore: 'host,app,pid',
+                  singleLine: true,
+                },
+              }
+            : undefined;
 
         return pino({
           level,
-          // transport,
+          transport,
           formatters: {
             bindings: ({
               pid,

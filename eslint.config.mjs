@@ -1,6 +1,7 @@
 // @ts-check
 import eslint from '@eslint/js';
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
+import eslintPluginTsdoc from 'eslint-plugin-tsdoc';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
@@ -15,6 +16,9 @@ export default tseslint.config(
   ...tseslint.configs.recommendedTypeChecked,
   eslintPluginPrettierRecommended,
   {
+    plugins: {
+      'tsdoc': eslintPluginTsdoc,
+    },
     languageOptions: {
       globals: {
         ...globals.node,
@@ -35,6 +39,14 @@ export default tseslint.config(
       '@typescript-eslint/no-unsafe-argument': 'off',
       '@typescript-eslint/no-unsafe-function-type': 'off',
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: "^_" }],
+
+      'tsdoc/syntax': 'warn',
     },
   },
+  {
+    files: ['**/*.spec.ts'],
+    rules: {
+      "@typescript-eslint/unbound-method": "off",
+    }
+  }
 );

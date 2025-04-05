@@ -1,73 +1,77 @@
-import { index, modelOptions, prop } from '@typegoose/typegoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IsDate, IsOptional, IsString } from 'class-validator';
-import { PatternType, ResponseType } from './simple-reply.constants';
+import { Document } from 'mongoose';
+import {
+  PatternType,
+  ResponseType,
+  SimpleRepliesCollectionName,
+} from './simple-reply.constants';
 
-@index({ pattern: 1, patternType: 1 }, { unique: true })
-@modelOptions({
-  schemaOptions: {
-    timestamps: true, // Automatically adds `createdAt` and `updatedAt`
-  },
-  options: {
-    customName: 'simple_replies',
-  },
+@Schema({
+  timestamps: true, // Automatically adds `createdAt` and `updatedAt`
+  collection: SimpleRepliesCollectionName,
 })
-export class SimpleReply {
+export class SimpleReply extends Document {
   @IsString()
-  @prop({ required: true })
+  @Prop({ required: true, unique: true })
   pattern!: string;
 
   @IsString()
-  @prop({ enum: Object.keys(PatternType), default: 'Exact' })
+  @Prop({ enum: Object.keys(PatternType), default: 'Exact' })
   patternType!: string;
 
   @IsString()
-  @prop({ required: true })
+  @Prop({ required: true })
   response!: string;
 
   @IsString()
-  @prop({ enum: Object.keys(ResponseType), default: 'Text' })
+  @Prop({ enum: Object.keys(ResponseType), default: 'Text' })
   responseType!: string;
 
   @IsOptional()
   @IsString()
-  @prop()
+  @Prop()
   mimeType?: string;
 
   @IsOptional()
   @IsString()
-  @prop()
+  @Prop()
   fileName?: string;
 
   @IsOptional()
   @IsString()
-  @prop()
+  @Prop()
   caption?: string;
 
   @IsOptional()
   @IsString()
-  @prop()
+  @Prop()
   parseMode?: string;
 
   @IsOptional()
   @IsString()
-  @prop()
+  @Prop()
   userId?: string;
 
   @IsOptional()
   @IsString()
-  @prop()
+  @Prop()
   username?: string;
 
   @IsDate()
-  @prop()
+  @Prop()
   createdAt!: Date;
 
   @IsDate()
-  @prop()
+  @Prop()
   updatedAt!: Date;
 
   @IsOptional()
   @IsString()
-  @prop()
+  @Prop()
   deletedAt?: Date;
 }
+
+export const SimpleReplySchema = SchemaFactory.createForClass(SimpleReply);
+
+SimpleReplySchema.index({ pattern: 1, patternType: 1 }, { unique: true });

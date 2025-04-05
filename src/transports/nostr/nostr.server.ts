@@ -15,7 +15,7 @@ export class NostrServer extends Server implements CustomTransportStrategy {
   private subscriptions = new Map<string, (eventData: any) => void>();
 
   /**
-   * @param relayUrls An array of relay websocket URLs, e.g. ["wss://relay1.example", "wss://relay2.example"]
+   * @param relayList - A set of relay websocket URLs, e.g. Set(["wss://relay1.example", "wss://relay2.example"])
    */
   constructor(
     @Inject(NOSTR_RELAY_LIST)
@@ -94,9 +94,9 @@ export class NostrServer extends Server implements CustomTransportStrategy {
 
   /**
    * Sends a subscription (REQ) to all connected relays.
-   * @param subscriptionId A unique identifier for the subscription request.
-   * @param filter A filter (as defined in Nostr protocol) that describes which events to subscribe to.
-   * @param callback Callback function to be invoked when an event matching the subscription is received.
+   * @param subscriptionId - A unique identifier for the subscription request.
+   * @param filter - A filter (as defined in Nostr protocol) that describes which events to subscribe to.
+   * @param callback - Callback function to be invoked when an event matching the subscription is received.
    */
   subscribe(
     subscriptionId: string,
@@ -115,7 +115,7 @@ export class NostrServer extends Server implements CustomTransportStrategy {
 
   /**
    * Sends an unsubscribe (CLOSE) message to all connected relays.
-   * @param subscriptionId The identifier used during subscribe.
+   * @param subscriptionId - The identifier used during subscribe.
    */
   unsubscribe(subscriptionId: string) {
     this.subscriptions.delete(subscriptionId);
