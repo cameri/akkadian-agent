@@ -61,7 +61,9 @@ Use `jj` for version control. Do not use `git` directly. `jj` is a distributed v
 - Update the description of a revision using `jj describe -m "your message"` after you are done making all changes if needed.
 - To split your changes into parent and child revisions, use `jj split [-r revision] <file,...>`. Use -r to split a specific revision other than the current one. Use -p to split the revision into two parallel revisions instead of a parent and child.
 - To create a new bookmark (a.k.a. branch), use `jj bookmark create <bookmark_name>`.
-- To move a bookmark (a.k.a. branch) to a different revision, use `jj bookmark move [--to <revision>] [--from <revision>]`.
+- To set a bookmark (a.k.a. move a branch) to a specific revision, use `jj bookmark set <bookmark_name> [--to <revision>]` or `jj bookmark move [--from <bookmark_name>] [--to <revision>]`.
+- To delete a bookmark (a.k.a. branch), use `jj bookmark delete <bookmark_name>`.
+- To list all bookmarks (a.k.a. branches), use `jj bookmark list`.
 - Always use `jj git push` to push your bookmark to the remote repository. Do not use `git push` directly.
 
 To see the diff of your changes:
