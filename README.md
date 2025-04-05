@@ -1,98 +1,166 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Akkadian Agent
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![NestJS](https://img.shields.io/badge/nestjs-10.x-red.svg)](https://nestjs.com)
+[![Node](https://img.shields.io/badge/node-%3E%3D18-green.svg)](https://nodejs.org)
+[![TypeScript](https://img.shields.io/badge/typescript-%3E%3D5.0.0-blue.svg)](https://www.typescriptlang.org/)
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+A Telegram and Nostr bot built with NestJS that supports automated replies and message handling.
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Akkadian Agent is a versatile bot that can:
+- Handle messages from both Telegram and Nostr platforms
+- Support configurable automated replies
+- Store message patterns and responses in MongoDB
+- Scale efficiently with containerized deployment
 
-## Project setup
+## Prerequisites
 
+Before you begin, ensure you have the following installed:
+- Node.js (>= 18.x)
+- pnpm (>= 8.6.0)
+- MongoDB (>= 6.0)
+- Docker (optional, for containerized deployment)
+
+## Installation
+
+1. Clone the repository:
 ```bash
-$ pnpm install
+git clone https://github.com/cameri/akkadian-agent.git
+cd akkadian-agent
 ```
 
-## Compile and run the project
-
+2. Install dependencies:
 ```bash
-# development
-$ pnpm run start
-
-# watch mode
-$ pnpm run start:dev
-
-# production mode
-$ pnpm run start:prod
+pnpm install
 ```
 
-## Run tests
-
+3. Copy the sample environment file and configure your variables:
 ```bash
-# unit tests
-$ pnpm run test
-
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
+cp sample.env .env
 ```
 
-## Deployment
+## Configuration
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+The following environment variables are required:
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+- `MONGODB_URI`: MongoDB connection string
+- `APP_NAME`: Application name for logging and database connection
+- `LOG_LEVEL`: Logging level (default: 'info')
+- `LOG_FORMAT`: Log format ('json' or 'pretty')
 
+For Telegram bot:
+- `TELEGRAM_BOT_TOKEN`: Your Telegram bot token from BotFather
+
+For Nostr:
+- `NOSTR_RELAY_URLS`: Comma-separated list of Nostr relay WebSocket URLs
+- `NOSTR_USER_WHITELIST`: Comma-separated list of whitelisted Nostr user IDs
+
+## Usage
+
+### Running Locally
+
+Development mode with hot-reload:
 ```bash
-$ pnpm install -g mau
-$ mau deploy
+pnpm run start:dev
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+Production mode:
+```bash
+pnpm run build
+pnpm run start:prod
+```
 
-## Resources
+### Using Docker
 
-Check out a few resources that may come in handy when working with NestJS:
+Build and run with Docker Compose:
+```bash
+pnpm run docker:start
+```
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+Stop containers:
+```bash
+pnpm run docker:stop
+```
 
-## Support
+View logs:
+```bash
+pnpm run docker:logs
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## Development
 
-## Stay in touch
+### Building
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+Check types:
+```bash
+pnpm run build:check
+```
+
+Build the application:
+```bash
+pnpm run build
+```
+
+### Testing
+
+Run unit tests:
+```bash
+pnpm run test:unit
+```
+
+Run integration tests:
+```bash
+pnpm run test:e2e
+```
+
+Generate coverage report:
+```bash
+pnpm run test:unit:cov
+```
+
+### Code Quality
+
+Format code:
+```bash
+pnpm run format:fix
+```
+
+Lint code:
+```bash
+pnpm run lint:fix
+```
+
+## Project Structure
+
+```
+src/
+├── app.module.ts              # Main application module
+├── main.ts                    # Application entry point
+├── database/                  # Database configuration
+├── instrumentation/          # Logging and monitoring
+├── simple-replies/           # Reply handling functionality
+└── transports/              # Platform-specific implementations
+    ├── nostr/               # Nostr protocol integration
+    └── telegram/            # Telegram bot integration
+```
+
+## Built With
+
+- [Node.js](https://nodejs.org/) - JavaScript runtime
+- [NestJS](https://nestjs.com/) - Progressive Node.js framework
+- [MongoDB](https://www.mongodb.com/) - Document database
+- [TypeScript](https://www.typescriptlang.org/) - JavaScript with syntax for types
+- [Mongoose](https://mongoosejs.com/) - MongoDB object modeling
+- [Jest](https://jestjs.io/) - Testing framework
+- [ESLint](https://eslint.org/) - Code linting
+- [Prettier](https://prettier.io/) - Code formatting
+
+## Contributing
+
+Please read our [Contributing Guide](.github/CONTRIBUTING.md) for details on our development process and how to submit changes.
 
 ## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
