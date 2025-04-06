@@ -1,6 +1,8 @@
+import { CustomTransportStrategy } from '@nestjs/microservices';
+
 export type LanguageCode = string;
 
-export interface User {
+export interface IUser {
   id: number;
   is_bot: boolean;
   first_name: string;
@@ -15,7 +17,7 @@ export interface User {
 
 export type ChatType = 'private' | 'group' | 'supergroup' | 'channel';
 
-export interface Chat {
+export interface IChat {
   id: number;
   title?: string;
   type: ChatType;
@@ -25,7 +27,7 @@ export interface Chat {
   is_forum?: true;
 }
 
-export interface ChatPhoto {
+export interface IChatPhoto {
   small_file_id: string;
   small_file_unique_id: string;
   big_file_id: string;
@@ -40,7 +42,7 @@ export interface TextQuote {
 }
 
 export interface Story {
-  chat: Chat;
+  chat: IChat;
   id: number;
 }
 
@@ -70,7 +72,7 @@ export interface MessageEntity {
   offset: number;
   length: number;
   url?: string;
-  user?: User;
+  user?: IUser;
   language?: string;
   custom_emoji_id?: string;
 }
@@ -185,19 +187,19 @@ export interface InlineKeyboardMarkup {
   inline_keyboard: InlineKeyboardButton[][];
 }
 
-export interface Message {
+export interface IMessage {
   message_id: number;
   message_thread_id?: number;
-  from?: User;
-  sender_chat?: Chat;
+  from?: IUser;
+  sender_chat?: IChat;
   date: number;
-  chat: Chat;
+  chat: IChat;
   is_topic_message?: true;
   is_automatic_forward?: true;
-  reply_to_message?: Message;
+  reply_to_message?: IMessage;
   quote?: TextQuote;
   reply_to_story?: Story;
-  via_bot?: User;
+  via_bot?: IUser;
   edit_date?: number;
   media_group_id?: string;
   author_signature?: string;
@@ -206,7 +208,7 @@ export interface Message {
   animation?: Animation;
   audio?: Audio;
   document?: Document;
-  photo?: ChatPhoto;
+  photo?: IChatPhoto;
   sticker?: Sticker;
   story?: Story;
   video?: Video;
@@ -215,8 +217,8 @@ export interface Message {
   caption_entities?: MessageEntity[];
   poll?: Poll;
   location?: Location;
-  new_chat_members?: User[];
-  left_chat_member?: User;
+  new_chat_members?: IUser[];
+  left_chat_member?: IUser;
   new_chat_title: string;
   new_chat_photo?: PhotoSize[];
   delete_chat_photo?: true;
@@ -230,7 +232,7 @@ export interface Message {
 
 export interface InlineQuery {
   id: string;
-  from: User;
+  from: IUser;
   query: string;
   offset: string;
   chat_type: 'sender' | ChatType;
@@ -238,7 +240,7 @@ export interface InlineQuery {
 
 export interface CallbackQuery {
   id: string;
-  from: User;
+  from: IUser;
   inline_message_id?: string;
   chat_instance: string;
   data?: string;
@@ -246,20 +248,20 @@ export interface CallbackQuery {
 
 export interface ChosenInlineResult {
   result_id: string;
-  from: User;
+  from: IUser;
   inline_message_id?: string;
   query: string;
 }
 
-export interface IUpdate {
+export interface ITelegramUpdate {
   update_id: number;
-  message?: Message;
-  edited_message?: Message;
-  channel_post?: Message;
-  edited_channel_post?: Message;
+  message?: IMessage;
+  edited_message?: IMessage;
+  channel_post?: IMessage;
+  edited_channel_post?: IMessage;
 }
 
-export type AllowedUpdate = keyof IUpdate;
+export type AllowedUpdate = keyof ITelegramUpdate;
 
 export interface GetUpdatesRequest {
   offset?: number;
@@ -284,7 +286,7 @@ export interface TooManyRequestsResponse {
 
 export interface GetUpdatesOkResponse {
   ok?: true;
-  result: IUpdate[];
+  result: ITelegramUpdate[];
 }
 
 export type GetUpdatesResponse = GetUpdatesOkResponse;
@@ -304,14 +306,179 @@ export interface ReplyParameters {
   quote?: string;
 }
 
-export interface SendMessageRequest {
+export interface ITelegramServer extends CustomTransportStrategy {
+  pause(): void;
+  resume(): void;
+}
+
+export interface ITelegramSendMessage {
   chat_id: string | number;
-  text: string;
-  parse_mode?: 'HTML' | 'Markdown' | 'MarkdownV2';
-  link_preview_options?: LinkPreviewOptions;
-  disable_notification?: boolean;
-  protect_content?: boolean;
+  message_thread_id?: number;
   reply_parameters?: ReplyParameters;
 }
 
-export type SendMessageResponse = Message;
+export interface ITelegramSendTextMessage extends ITelegramSendMessage {
+  text: string;
+  parse_mode?: 'HTML' | 'Markdown' | 'MarkdownV2';
+  entities?: MessageEntity[];
+  link_preview_options?: LinkPreviewOptions;
+  protect_content?: boolean;
+  disable_notification?: boolean;
+}
+
+export interface ITelegramSendStickerMessage extends ITelegramSendMessage {
+  sticker: string;
+  emoji?: string;
+  disable_notification?: boolean;
+}
+
+export interface ITelegramSendPhotoMessage extends ITelegramSendMessage {
+  photo: string;
+  caption?: string;
+  caption_entities?: MessageEntity[];
+  parse_mode?: 'HTML' | 'Markdown' | 'MarkdownV2';
+  disable_notification?: boolean;
+}
+
+export interface ITelegramSendDocumentMessage extends ITelegramSendMessage {
+  document: string;
+  thumbnail?: string;
+  caption?: string;
+  caption_entities?: MessageEntity[];
+  parse_mode?: 'HTML' | 'Markdown' | 'MarkdownV2';
+  disable_notification?: boolean;
+}
+
+export interface ITelegramSendVoiceMessage extends ITelegramSendMessage {
+  voice: string;
+  duration?: number;
+  caption?: string;
+  caption_entities?: MessageEntity[];
+  parse_mode?: 'HTML' | 'Markdown' | 'MarkdownV2';
+  disable_notification?: boolean;
+}
+
+export interface ITelegramSendVideoMessage extends ITelegramSendMessage {
+  video: string;
+  duration?: number;
+  width?: number;
+  height?: number;
+  cover?: string;
+  caption?: string;
+  caption_entities?: MessageEntity[];
+  parse_mode?: 'HTML' | 'Markdown' | 'MarkdownV2';
+  disable_notification?: boolean;
+}
+
+export interface ITelegramSendAudioMessage extends ITelegramSendMessage {
+  audio: string;
+  duration?: number;
+  performer?: string;
+  title?: string;
+  caption?: string;
+  caption_entities?: MessageEntity[];
+  parse_mode?: 'HTML' | 'Markdown' | 'MarkdownV2';
+  disable_notification?: boolean;
+}
+
+export interface ITelegramSendChatActionMessage extends ITelegramSendMessage {
+  action:
+    | 'typing'
+    | 'upload_photo'
+    | 'record_video'
+    | 'upload_video'
+    | 'record_voice'
+    | 'upload_voice'
+    | 'upload_document'
+    | 'choose_sticker'
+    | 'find_location'
+    | 'record_video_note'
+    | 'upload_video_note';
+}
+
+export type ReactionType = ReactionTypeEmoji;
+
+export interface ReactionTypeEmoji {
+  type: 'emoji';
+  emoji:
+    | '👍'
+    | '👎'
+    | '❤'
+    | '🔥'
+    | '🥰'
+    | '👏'
+    | '😁'
+    | '🤔'
+    | '🤯'
+    | '😱'
+    | '🤬'
+    | '😢'
+    | '🎉'
+    | '🤩'
+    | '🤮'
+    | '💩'
+    | '🙏'
+    | '👌'
+    | '🕊'
+    | '🤡'
+    | '🥱'
+    | '🥴'
+    | '😍'
+    | '🐳'
+    | '❤‍🔥'
+    | '🌚'
+    | '🌭'
+    | '💯'
+    | '🤣'
+    | '⚡'
+    | '🍌'
+    | '🏆'
+    | '💔'
+    | '🤨'
+    | '😐'
+    | '🍓'
+    | '🍾'
+    | '💋'
+    | '🖕'
+    | '😈'
+    | '😴'
+    | '😭'
+    | '🤓'
+    | '👻'
+    | '👨‍💻'
+    | '👀'
+    | '🎃'
+    | '🙈'
+    | '😇'
+    | '😨'
+    | '🤝'
+    | '✍'
+    | '🤗'
+    | '🫡'
+    | '🎅'
+    | '🎄'
+    | '☃'
+    | '💅'
+    | '🤪'
+    | '🗿'
+    | '🆒'
+    | '💘'
+    | '🙉'
+    | '🦄'
+    | '😘'
+    | '💊'
+    | '🙊'
+    | '😎'
+    | '👾'
+    | '🤷‍♂'
+    | '🤷'
+    | '🤷‍♀'
+    | '😡';
+}
+
+export interface ITelegramSendReaction {
+  chat_id: string | number;
+  message_id: number;
+  reaction: ReactionType[];
+  is_big?: true;
+}

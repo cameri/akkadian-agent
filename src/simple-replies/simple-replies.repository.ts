@@ -1,22 +1,32 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { SimpleReply } from './models/simple-reply.model';
+import { Optional } from '../@types/base';
+import { Reply } from './schemas/reply.schema';
+import { IReply, IReplyRepository } from './simple-replies.types';
 
 @Injectable()
-export class SimpleRepliesRepository {
+export class ReplyRepository implements IReplyRepository {
   constructor(
-    @InjectModel(SimpleReply.name)
-    private readonly simpleReplyModel: Model<SimpleReply>,
+    @InjectModel(Reply.name)
+    private readonly simpleReplyModel: Model<Reply>,
   ) {}
 
-  async create(pattern: string, response: string): Promise<boolean> {
-    const result = await this.simpleReplyModel.create({
-      pattern,
-      response,
-    });
+  async create(reply: IReply): Promise<IReply | null> {
+    const { pattern, ...update } = reply;
+    const filter = { pattern };
+    const options = {
+      upsert: true,
+      new: true,
+    };
 
-    return result.isNew;
+    const result: IReply | null = await this.simpleReplyModel.findOneAndUpdate(
+      filter,
+      update,
+      options,
+    );
+
+    return result;
   }
 
   async delete(pattern: string): Promise<boolean> {
@@ -25,7 +35,12 @@ export class SimpleRepliesRepository {
     return result.deletedCount > 0;
   }
 
-  async findOneByPattern(pattern: string): Promise<SimpleReply | null> {
-    return this.simpleReplyModel.findOne({ pattern });
+  async findOneByPattern(pattern: string): Promise<Optional<IReply>> {
+    const result = await this.simpleReplyModel.findOne({ pattern });
+    if (!result) {
+      return;
+    }
+
+    return result;
   }
 }

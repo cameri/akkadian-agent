@@ -4,12 +4,7 @@ This project is a bot that supports both Telegram and Nostr. The application is 
 
 ## Coding Standards
 
-- Use camelCase for variable and function names.
-- Use PascalCase for component names.
-- Use single quotes for strings.
-- Use 2 spaces for indentation.
-- Use template literals for strings that contain variables except when using them with the LogService.
-- Use the latest JavaScript features (ES6+) where possible.
+- Detailed coding standards are outlined in the `typescript-instructions.md` file.
 
 ## General
 
@@ -35,54 +30,7 @@ pnpm run lint:fix
 To format:
 pnpm run format:fix
 
-To build the docker image:
-pnpm run docker:build
 
-### Testing
+## Version Control
 
-- Use Jest for unit testing and Cucumber for integration testing.
-- Use supertest for testing HTTP requests.
-
-- Never assert on the console output, logging, or tracing of the app.
-
-To test:
-pnpm run test:unit
-
-To run coverage report:
-pnpm run test:unit:cov
-
-To run integration tests:
-pnpm run test:integration
-
-## Contributing
-
-Use `jj` for version control. Do not use `git` directly. `jj` is a distributed version control system that is similar to Git but has some differences in its workflow and commands.
-- Always create a new revision using `jj new -m "your message"` before making new edits.
-- Update the description of a revision using `jj describe -m "your message"` after you are done making all changes if needed.
-- To split your changes into parent and child revisions, use `jj split [-r revision] <file,...>`. Use -r to split a specific revision other than the current one. Use -p to split the revision into two parallel revisions instead of a parent and child.
-- To create a new bookmark (a.k.a. branch), use `jj bookmark create <bookmark_name>`.
-- To set a bookmark (a.k.a. move a branch) to a specific revision, use `jj bookmark set <bookmark_name> [--to <revision>]` or `jj bookmark move [--from <bookmark_name>] [--to <revision>]`.
-- To delete a bookmark (a.k.a. branch), use `jj bookmark delete <bookmark_name>`.
-- To list all bookmarks (a.k.a. branches), use `jj bookmark list`.
-- Always use `jj git push` to push your bookmark to the remote repository. Do not use `git push` directly.
-
-To see the diff of your changes:
-jj diff
-
-To update your working copy or see the status of your changes:
-jj status
-
-To see the log of your changes (e.g. to see the change history):
-jj log
-
-To see the log operations we've applied with jj:
-jj op log
-
-To squash the last two revisions:
-jj squash
-
-To undo the last revision:
-jj undo
-
-To rebase a revision and it's descendants on top of another revision:
-jj rebase -s <source_revision> -d <destination_revision>
+- USe `jj` for version control. Detailed instructions are in the `using-jj-instructions.md` file.

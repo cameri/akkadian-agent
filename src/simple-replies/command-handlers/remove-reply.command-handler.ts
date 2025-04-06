@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { RemoveReplyCommand } from '../commands/remove-reply.command';
-import { SimpleRepliesRepository } from '../simple-replies.repository';
+import { ReplyRepository } from '../simple-replies.repository';
 import {
   RemoveReplyCommandArgs,
   RemoveReplyCommandResult,
@@ -12,7 +12,7 @@ export class RemoveReplyCommandHandler
   implements ICommandHandler<RemoveReplyCommandArgs, RemoveReplyCommandResult>
 {
   constructor(
-    private readonly repository: SimpleRepliesRepository,
+    private readonly repository: ReplyRepository,
     private readonly logger: Logger,
   ) {}
 
@@ -25,7 +25,7 @@ export class RemoveReplyCommandHandler
       result,
     );
     return Promise.resolve({
-      reply_text: `🗑️ Reply for ${command.pattern} removed.`,
+      replyText: `🗑️ Reply for ${command.pattern} removed.`,
     });
   }
 }

@@ -1,24 +1,27 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IsDate, IsOptional, IsString } from 'class-validator';
-import { Document } from 'mongoose';
+import { HydratedDocument } from 'mongoose';
+import { IReply } from '../simple-replies.types';
 import {
   PatternType,
   ResponseType,
   SimpleRepliesCollectionName,
-} from './simple-reply.constants';
+} from '../simple-reply.constants';
+
+export type ReplyDocument = HydratedDocument<Reply>;
 
 @Schema({
   timestamps: true, // Automatically adds `createdAt` and `updatedAt`
   collection: SimpleRepliesCollectionName,
 })
-export class SimpleReply extends Document {
+export class Reply implements IReply {
   @IsString()
   @Prop({ required: true, unique: true })
   pattern!: string;
 
   @IsString()
   @Prop({ enum: Object.keys(PatternType), default: 'Exact' })
-  patternType!: string;
+  patternType!: PatternType;
 
   @IsString()
   @Prop({ required: true })
@@ -26,7 +29,7 @@ export class SimpleReply extends Document {
 
   @IsString()
   @Prop({ enum: Object.keys(ResponseType), default: 'Text' })
-  responseType!: string;
+  responseType!: ResponseType;
 
   @IsOptional()
   @IsString()
@@ -72,6 +75,6 @@ export class SimpleReply extends Document {
   deletedAt?: Date;
 }
 
-export const SimpleReplySchema = SchemaFactory.createForClass(SimpleReply);
+export const ReplySchema = SchemaFactory.createForClass(Reply);
 
-SimpleReplySchema.index({ pattern: 1, patternType: 1 }, { unique: true });
+ReplySchema.index({ pattern: 1, patternType: 1 }, { unique: true });

@@ -1,28 +1,33 @@
+import { DeepMocked } from '@golevelup/ts-jest';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
-import { SimpleRepliesRepository } from './simple-replies.repository';
-
-const mockSimpleReplyModel = {
-  create: jest.fn().mockResolvedValue({}),
-  deleteOne: jest.fn().mockResolvedValue({}),
-  findOne: jest.fn().mockResolvedValue(null),
-};
+import { DeleteResult, Model } from 'mongoose';
+import { Reply, ReplyDocument } from './schemas/reply.schema';
+import { ReplyRepository } from './simple-replies.repository';
+import { PatternType, ResponseType } from './simple-reply.constants';
 
 describe('SimpleRepliesRepository', () => {
-  let repository: SimpleRepliesRepository;
-
+  let repository: ReplyRepository;
+  let simplyReplyModelMock: DeepMocked<Model<Reply>>;
   beforeEach(async () => {
+    simplyReplyModelMock = {
+      create: jest.fn(),
+      deleteOne: jest.fn(),
+      findOneAndUpdate: jest.fn(),
+      findOne: jest.fn(),
+    } as unknown as DeepMocked<Model<Reply>>;
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        SimpleRepliesRepository,
+        ReplyRepository,
         {
-          provide: getModelToken('SimpleReply'),
-          useValue: mockSimpleReplyModel,
+          provide: getModelToken(Reply.name),
+          useValue: simplyReplyModelMock,
         },
       ],
     }).compile();
 
-    repository = module.get<SimpleRepliesRepository>(SimpleRepliesRepository);
+    repository = module.get<ReplyRepository>(ReplyRepository);
   });
 
   afterEach(() => {
@@ -30,31 +35,41 @@ describe('SimpleRepliesRepository', () => {
   });
 
   describe('create', () => {
-    it('should create a new simple reply and return true if successful', async () => {
+    it('should upsert a new simple reply and return if successful', async () => {
       const pattern = 'hello';
       const response = 'world';
-      const mockResult = { isNew: true };
-      mockSimpleReplyModel.create.mockResolvedValue(mockResult);
+      const patternType = PatternType.Exact;
+      const responseType = ResponseType.Text;
+      const mockResult: ReplyDocument = {} as unknown as ReplyDocument;
+      simplyReplyModelMock.findOneAndUpdate.mockResolvedValue(mockResult);
 
-      const result = await repository.create(pattern, response);
-
-      expect(mockSimpleReplyModel.create).toHaveBeenCalledWith({
+      const result = await repository.create({
         pattern,
+        patternType,
         response,
+        responseType,
       });
-      expect(result).toBe(true);
+
+      expect(simplyReplyModelMock.findOneAndUpdate).toHaveBeenCalledWith(
+        {
+          pattern,
+        },
+        { response, patternType, responseType },
+        { upsert: true, new: true },
+      );
+      expect(result).toBeDefined();
     });
   });
 
   describe('delete', () => {
     it('should delete a simple reply and return true if successful', async () => {
       const pattern = 'hello';
-      const mockResult = { deletedCount: 1 };
-      mockSimpleReplyModel.deleteOne.mockResolvedValue(mockResult);
+      const mockResult = { deletedCount: 1 } as unknown as DeleteResult;
+      simplyReplyModelMock.deleteOne.mockResolvedValue(mockResult);
 
       const result = await repository.delete(pattern);
 
-      expect(mockSimpleReplyModel.deleteOne).toHaveBeenCalledWith({ pattern });
+      expect(simplyReplyModelMock.deleteOne).toHaveBeenCalledWith({ pattern });
       expect(result).toBe(true);
     });
   });
@@ -63,11 +78,11 @@ describe('SimpleRepliesRepository', () => {
     it('should find a simple reply by pattern', async () => {
       const pattern = 'hello';
       const mockReply = { pattern, response: 'world' };
-      mockSimpleReplyModel.findOne.mockResolvedValue(mockReply);
+      simplyReplyModelMock.findOne.mockResolvedValue(mockReply);
 
       const result = await repository.findOneByPattern(pattern);
 
-      expect(mockSimpleReplyModel.findOne).toHaveBeenCalledWith({ pattern });
+      expect(simplyReplyModelMock.findOne).toHaveBeenCalledWith({ pattern });
       expect(result).toEqual(mockReply);
     });
   });

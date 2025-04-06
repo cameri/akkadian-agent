@@ -1,12 +1,12 @@
 import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { RemoveReplyCommand } from '../commands/remove-reply.command';
-import { SimpleRepliesRepository } from '../simple-replies.repository';
+import { ReplyRepository } from '../simple-replies.repository';
 import { RemoveReplyCommandHandler } from './remove-reply.command-handler';
 
 describe('RemoveReplyCommandHandler', () => {
   let handler: RemoveReplyCommandHandler;
-  let repository: jest.Mocked<SimpleRepliesRepository>;
+  let repository: jest.Mocked<ReplyRepository>;
   let logger: jest.Mocked<Logger>;
 
   beforeEach(async () => {
@@ -22,7 +22,7 @@ describe('RemoveReplyCommandHandler', () => {
       providers: [
         RemoveReplyCommandHandler,
         {
-          provide: SimpleRepliesRepository,
+          provide: ReplyRepository,
           useValue: mockRepository,
         },
         {
@@ -33,7 +33,7 @@ describe('RemoveReplyCommandHandler', () => {
     }).compile();
 
     handler = module.get<RemoveReplyCommandHandler>(RemoveReplyCommandHandler);
-    repository = module.get(SimpleRepliesRepository);
+    repository = module.get(ReplyRepository);
     logger = module.get(Logger);
   });
 
@@ -55,7 +55,7 @@ describe('RemoveReplyCommandHandler', () => {
         true,
       );
       expect(result).toEqual({
-        reply_text: `🗑️ Reply for ${pattern} removed.`,
+        replyText: `🗑️ Reply for ${pattern} removed.`,
       });
     });
 
@@ -72,7 +72,7 @@ describe('RemoveReplyCommandHandler', () => {
         false,
       );
       expect(result).toEqual({
-        reply_text: `🗑️ Reply for ${pattern} removed.`,
+        replyText: `🗑️ Reply for ${pattern} removed.`,
       });
     });
   });

@@ -2,6 +2,7 @@ import { Command } from '@nestjs/cqrs';
 import {
   AddReplyCommandArgs,
   AddReplyCommandResult,
+  IReply,
 } from '../simple-replies.types';
 
 export class AddReplyCommand extends Command<AddReplyCommandResult> {
@@ -9,7 +10,7 @@ export class AddReplyCommand extends Command<AddReplyCommandResult> {
     super();
   }
 
-  get pattern() {
-    return this.args.pattern;
+  get reply(): IReply {
+    return this.args;
   }
 }

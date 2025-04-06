@@ -3,7 +3,9 @@ import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as http from 'node:http';
 import * as https from 'node:https';
+import { SchedulingModule } from '../../scheduling/scheduling.module';
 import {
+  PAUSABLE_TIMER,
   TELEGRAM_ADMIN_LIST,
   TELEGRAM_USER_WHITELIST,
 } from './telegram.constants';
@@ -21,7 +23,9 @@ import { TelegramServer } from './telegram.server';
         const config: HttpModuleOptions = {
           baseURL: baseURL.toString(),
           headers: {
+            Accept: 'application/json',
             'Content-Type': 'application/json',
+            'User-Agent': 'akkadian-agent/0.0.1',
           },
           responseType: 'json',
           timeout: 5000,
@@ -40,6 +44,14 @@ import { TelegramServer } from './telegram.server';
 
         return config;
       },
+    }),
+    SchedulingModule.forFeature(PAUSABLE_TIMER, (configService) => {
+      const interval = configService.get<number>('TELEGRAM_POLLING_INTERVAL');
+      const dueTime = configService.get<string>('STAGE') === 'test' ? -1 : 0;
+      return {
+        interval,
+        dueTime,
+      };
     }),
   ],
   providers: [

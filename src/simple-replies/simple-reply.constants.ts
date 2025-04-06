@@ -19,5 +19,5 @@ export enum ResponseType {
   Text = 'Text',
   Video = 'Video',
   VideoNote = 'Video note',
-  Voice = 'Voice note',
+  Voice = 'Voice',
 }

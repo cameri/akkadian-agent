@@ -1,0 +1,26 @@
+{
+  "github.copilot.chat.codeGeneration.instructions": [
+    {
+      "file": "./.github/typescript-instructions.md"
+    },
+    {
+      "file": "./.github/database-instructions.md"
+    }
+  ],
+  "github.copilot.chat.commitMessageGeneration.instructions": [
+    {
+      "text": "Use conventional commit message format. Keep the message short and descriptive. Use imperative mood. Include the type of change (feat, fix, chore, docs, style, refactor) and a brief description of the change if needed."
+    }
+  ],
+  "github.copilot.chat.testGeneration.instructions": [
+    {
+      "file": "./githug/unit-testing-instructions.md"
+    },
+    {
+      "file": "./githug/integration-testing-instructions.md"
+    },
+  ],
+  "eslint.useFlatConfig": true,
+  "git.autorefresh": false,
+  "git.enabled": false,
+}

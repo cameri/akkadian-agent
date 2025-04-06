@@ -1,13 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { PatternType, ResponseType } from '../models/simple-reply.constants';
-import { SimpleReply } from '../models/simple-reply.model';
 import { GetReplyQuery } from '../queries/get-reply.query';
-import { SimpleRepliesRepository } from '../simple-replies.repository';
+import { ReplyRepository } from '../simple-replies.repository';
+import { IReply } from '../simple-replies.types';
+import { PatternType, ResponseType } from '../simple-reply.constants';
 import { GetReplyQueryHandler } from './get-reply.query-handler';
 
 describe('GetReplyQueryHandler', () => {
   let handler: GetReplyQueryHandler;
-  let repository: jest.Mocked<SimpleRepliesRepository>;
+  let repository: jest.Mocked<ReplyRepository>;
 
   beforeEach(async () => {
     const mockRepository = {
@@ -18,14 +18,14 @@ describe('GetReplyQueryHandler', () => {
       providers: [
         GetReplyQueryHandler,
         {
-          provide: SimpleRepliesRepository,
+          provide: ReplyRepository,
           useValue: mockRepository,
         },
       ],
     }).compile();
 
     handler = module.get<GetReplyQueryHandler>(GetReplyQueryHandler);
-    repository = module.get(SimpleRepliesRepository);
+    repository = module.get(ReplyRepository);
   });
 
   it('should be defined', () => {
@@ -35,30 +35,31 @@ describe('GetReplyQueryHandler', () => {
   describe('execute', () => {
     it('should return a reply when found', async () => {
       const pattern = 'hello';
-      const query = new GetReplyQuery(pattern);
-      const mockReply: Partial<SimpleReply> = {
+      const query = new GetReplyQuery({ pattern });
+      const mockReply: IReply = {
         pattern,
         patternType: PatternType.Exact,
         response: 'Hi there!',
         responseType: ResponseType.Text,
       };
-      repository.findOneByPattern.mockResolvedValue(mockReply as SimpleReply);
+      repository.findOneByPattern.mockResolvedValue(mockReply);
 
       const result = await handler.execute(query);
 
       expect(repository.findOneByPattern).toHaveBeenCalledWith(pattern);
-      expect(result).toEqual(mockReply);
+      expect(result.result).toEqual(mockReply);
     });
 
     it('should return null when reply not found', async () => {
       const pattern = 'nonexistent';
-      const query = new GetReplyQuery(pattern);
-      repository.findOneByPattern.mockResolvedValue(null);
+      const query = new GetReplyQuery({ pattern });
+      repository.findOneByPattern.mockResolvedValue(undefined);
 
       const result = await handler.execute(query);
 
       expect(repository.findOneByPattern).toHaveBeenCalledWith(pattern);
-      expect(result).toBeNull();
+      expect(result.error).toBeUndefined();
+      expect(result.result).toBeUndefined();
     });
   });
 });

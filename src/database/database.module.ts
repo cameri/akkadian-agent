@@ -6,17 +6,24 @@ import { MongooseModule } from '@nestjs/mongoose';
   imports: [
     MongooseModule.forRootAsync({
       useFactory: (configService: ConfigService) => {
-        const uri = configService.getOrThrow<string>('MONGODB_URI');
-        const appName = configService.get<string>('APP_NAME');
+        let uri = configService.get<string>('MONGODB_URI');
+        if (!uri) {
+          uri = configService.get<string>('MONGODB_URI_LOCAL');
+          const username = configService.get<string>('MONGODB_USERNAME');
+          const password = configService.get<string>('MONGODB_PASSWORD');
+          const database = configService.get<string>('MONGODB_DATABASE');
+          const host = configService.get<string>('MONGODB_HOST');
+          const port = configService.get<string>('MONGODB_PORT');
+          uri = `mongodb://${username}:${password}@${host}:${port}/${database}`;
+        }
 
         return {
           uri,
-          connectionName: appName,
-          minPoolSize: 5,
-          maxPoolSize: 10,
-          maxIdleTimeMS: 60000,
-          timeoutMS: 10000,
-          serverSelectionTimeoutMS: 5000,
+          minPoolSize: 1,
+          maxPoolSize: 2,
+          maxIdleTimeMS: 30000,
+          timeoutMS: 1000,
+          serverSelectionTimeoutMS: 1000,
           useBigInt64: true,
         };
       },

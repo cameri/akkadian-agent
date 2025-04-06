@@ -9,7 +9,8 @@ export default tseslint.config(
   {
     ignores: [
       'eslint.config.mjs',
-      'scripts/mongo/init.js'
+      'scripts/mongo/init.js',
+      'cucumber.js',
     ],
   },
   eslint.configs.recommended,
@@ -47,6 +48,7 @@ export default tseslint.config(
     files: ['**/*.spec.ts'],
     rules: {
       "@typescript-eslint/unbound-method": "off",
+      "@typescript-eslint/no-unsafe-return": "off",
     }
   }
 );

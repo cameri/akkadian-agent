@@ -1,18 +1,21 @@
 import { Logger } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { Test, TestingModule } from '@nestjs/testing';
-import { Update } from '../transports/telegram/ext/update';
-import { Message } from '../transports/telegram/telegram.types';
+import { ReactionResponse } from '../transports/telegram/ext/reaction-response';
+import { TelegramUpdate } from '../transports/telegram/ext/telegram-update';
+import { TextResponse } from '../transports/telegram/ext/text-response';
+import { IMessage } from '../transports/telegram/telegram.types';
 import { AddReplyCommand } from './commands/add-reply.command';
 import { RemoveReplyCommand } from './commands/remove-reply.command';
 import { GetReplyQuery } from './queries/get-reply.query';
 import { SimpleRepliesController } from './simple-replies.controller';
+import { GetReplyQueryResult } from './simple-replies.types';
+import { PatternType, ResponseType } from './simple-reply.constants';
 
 describe('SimpleRepliesController', () => {
   let controller: SimpleRepliesController;
   let commandBus: jest.Mocked<CommandBus>;
   let queryBus: jest.Mocked<QueryBus>;
-  let logger: jest.Mocked<Logger>;
 
   beforeEach(async () => {
     const mockCommandBus = {
@@ -25,6 +28,8 @@ describe('SimpleRepliesController', () => {
 
     const mockLogger = {
       log: jest.fn(),
+      error: jest.fn(),
+      verbose: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -55,42 +60,89 @@ describe('SimpleRepliesController', () => {
   });
 
   describe('handleAddReplyMessage', () => {
-    it('should construct and execute AddReplyCommand', async () => {
+    it('should return ReactionResponse on success', async () => {
       const pattern = 'hello';
       const message = {
-        text: `/addreply ${pattern}`,
-      } as Message;
+        message_id: 1,
+        chat: {
+          id: 1,
+        },
+        text: `/add_reply ${pattern}`,
+        reply_to_message: {
+          text: 'world',
+        },
+      } as IMessage;
 
-      const update = new Update({
+      const update = new TelegramUpdate({
         update_id: 1,
         message,
       });
 
-      const expectedResponse = { reply_text: 'Success' };
-      commandBus.execute.mockResolvedValue(expectedResponse);
+      const expectedCommandResult = { result: true };
+      commandBus.execute.mockResolvedValue(expectedCommandResult);
 
-      const result = await controller.handleAddReplyMessage(update);
+      const result = await controller.handleAddReplyMessage(message, update);
 
       expect(commandBus.execute).toHaveBeenCalledWith(
         expect.any(AddReplyCommand),
       );
-      expect(result).toBe(expectedResponse);
+      expect(result).toBeInstanceOf(ReactionResponse);
+    });
+
+    it('should return TextResponse on error', async () => {
+      const pattern = 'hello';
+      const message = {
+        message_id: 1,
+        chat: {
+          id: 1,
+        },
+        text: `/add_reply ${pattern}`,
+        reply_to_message: {
+          text: 'world',
+        },
+      } as IMessage;
+
+      const update = new TelegramUpdate({
+        update_id: 1,
+        message,
+      });
+
+      const expectedCommandResult = { error: 'Something went wrong' };
+      commandBus.execute.mockResolvedValue(expectedCommandResult);
+
+      const result = await controller.handleAddReplyMessage(message, update);
+
+      expect(commandBus.execute).toHaveBeenCalledWith(
+        expect.any(AddReplyCommand),
+      );
+      expect(result).toBeInstanceOf(TextResponse);
     });
   });
 
   describe('handleRemoveReplyMessage', () => {
     it('should construct and execute RemoveReplyCommand', async () => {
       const pattern = 'hello';
+      // Create a message with the specific text format
       const message = {
         text: `/remove_reply ${pattern}`,
-      } as Message;
+      } as IMessage;
 
-      const update = new Update({
+      // Create a TelegramUpdate with the message
+      const update = new TelegramUpdate({
         update_id: 1,
         message,
       });
 
-      const expectedResponse = { reply_text: 'Success' };
+      // Mock the properties needed by the removeReplyCommandRegExp match
+      Object.defineProperty(update, 'text', {
+        get: function () {
+          return `/remove_reply ${pattern}`;
+        },
+      });
+
+      const expectedResponse = {
+        replyText: `🗑️ Reply for ${pattern} removed.`,
+      };
       commandBus.execute.mockResolvedValue(expectedResponse);
 
       const result = await controller.handleRemoveReplyMessage(update);
@@ -103,22 +155,56 @@ describe('SimpleRepliesController', () => {
   });
 
   describe('handleTextMessage', () => {
-    it('should execute GetReplyQuery', async () => {
+    it('should execute GetReplyQuery and return TextResponse for text response type', async () => {
       const message = {
+        message_id: 1,
+        chat: {
+          id: 1,
+        },
         text: 'some text',
-      } as Message;
+      } as IMessage;
 
-      const update = new Update({
+      const update = new TelegramUpdate({
         update_id: 1,
         message,
       });
 
-      const expectedResponse = null;
+      const expectedResponse: GetReplyQueryResult = {
+        result: {
+          pattern: 'some text',
+          patternType: PatternType.Exact,
+          response: 'some response',
+          responseType: ResponseType.Text,
+        },
+      };
       queryBus.execute.mockResolvedValue(expectedResponse);
 
-      await controller.handleTextMessage(update);
+      const result = await controller.handleTextMessage(message, update);
 
       expect(queryBus.execute).toHaveBeenCalledWith(expect.any(GetReplyQuery));
+      expect(result).toBeInstanceOf(TextResponse);
+    });
+
+    it('should return undefined when no reply is found', async () => {
+      const message = {
+        message_id: 1,
+        chat: {
+          id: 1,
+        },
+        text: 'some text',
+      } as IMessage;
+
+      const update = new TelegramUpdate({
+        update_id: 1,
+        message,
+      });
+
+      queryBus.execute.mockResolvedValue({ result: undefined });
+
+      const result = await controller.handleTextMessage(message, update);
+
+      expect(queryBus.execute).toHaveBeenCalledWith(expect.any(GetReplyQuery));
+      expect(result).toBeUndefined();
     });
   });
 });

@@ -1,0 +1,30 @@
+# MongoDB Instruction
+
+- Use camelCase for field names in schemas and documents.
+- Use lower, singular nouns and separate words with dashes for collection names.
+- Avoid embedding documents with a depth greater than 2; instead prefer references for relationships.
+- Use `_id` as the primary key for all documents.
+- Avoid using reserved MongoDB keywords as field names.
+- Use consistent naming conventions across all collections and fields.
+- Use consistent abbreviated unit of scale suffix for monetary values, times, distances, and other measurements (e.g. `usd`, `ms`, `sec`, `km`).
+- Store dates in ISO 8601 format.
+- Avoid storing large binary data directly in documents; use GridFS instead.
+- Index fields that are frequently queried.
+- Use compound indexes for queries that filter on multiple fields following the Equality-Range-Sort rule. `$regex` is a range operator. `$in` is a sort operator when it has 200 elements or more, otherwise it's an equality operator.
+- Avoid inequality operators like `$ne` and `$nin` in queries as they can lead to full collection scans.
+- Avoid using dynamic fields; define all fields explicitly in schemas.
+- Use capped collections for logs or time-series data when appropriate.
+- Avoid using arrays with unbounded growth.
+- Use meaningful and descriptive field names.
+- Avoid storing computed or derived data unless necessary for performance.
+- Use validation rules to enforce schema constraints.
+- Avoid using null values; prefer omitting fields when data is unavailable.
+- Use transactions for multi-document operations when consistency is required.
+- Avoid over-indexing; only index fields that improve query performance.
+- Use appropriate data types for fields to minimize storage and improve performance.
+- Document the schema and collection design for maintainability.
+- Use meaningful names for indexes to improve readability.
+- Use aggregation pipelines for complex data transformations.
+- Ensure all queries are optimized and use indexes effectively.
+- Avoid hard-deleting documents; prefer soft deletes with a `deletedAt` field.
+- Avoid storing arrays with mixed data types.

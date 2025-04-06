@@ -1,21 +1,25 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { AddReplyCommand } from '../commands/add-reply.command';
-import { SimpleRepliesRepository } from '../simple-replies.repository';
-import {
-  AddReplyCommandArgs,
-  AddReplyCommandResult,
-} from '../simple-replies.types';
+import { ReplyRepository } from '../simple-replies.repository';
+import { AddReplyCommandResult } from '../simple-replies.types';
 
 @CommandHandler(AddReplyCommand)
 export class AddReplyCommandHandler
-  implements ICommandHandler<AddReplyCommandArgs, AddReplyCommandResult>
+  implements ICommandHandler<AddReplyCommand, AddReplyCommandResult>
 {
-  constructor(private readonly repository: SimpleRepliesRepository) {}
+  constructor(private readonly repository: ReplyRepository) {}
 
   async execute(command: AddReplyCommand): Promise<AddReplyCommandResult> {
-    await this.repository.create(command.pattern, 'response here');
-    return Promise.resolve({
-      reply_text: `✅ Reply for ${command.pattern} added.`,
-    });
+    try {
+      await this.repository.create(command.reply);
+
+      return {
+        result: true,
+      };
+    } catch (error) {
+      return {
+        error: `Unable to add reply: ${error}`,
+      };
+    }
   }
 }
