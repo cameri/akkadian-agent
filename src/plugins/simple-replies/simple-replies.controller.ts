@@ -18,17 +18,17 @@ import {
   test,
   toLower,
 } from 'ramda';
-import { AudioResponse } from '../transports/telegram/ext/audio-response';
-import { DocumentResponse } from '../transports/telegram/ext/document-response';
-import { PhotoResponse } from '../transports/telegram/ext/photo-response';
-import { ReactionResponse } from '../transports/telegram/ext/reaction-response';
-import { StickerResponse } from '../transports/telegram/ext/sticker-response';
-import { TelegramUpdate } from '../transports/telegram/ext/telegram-update';
-import { TextResponse } from '../transports/telegram/ext/text-response';
-import { VideoResponse } from '../transports/telegram/ext/video-response';
-import { VoiceResponse } from '../transports/telegram/ext/voice-response';
-import { TelegramServerTransport } from '../transports/telegram/telegram.constants';
-import { IMessage } from '../transports/telegram/telegram.types';
+import { AudioResponse } from '../../transports/telegram/ext/audio-response';
+import { DocumentResponse } from '../../transports/telegram/ext/document-response';
+import { PhotoResponse } from '../../transports/telegram/ext/photo-response';
+import { ReactionResponse } from '../../transports/telegram/ext/reaction-response';
+import { StickerResponse } from '../../transports/telegram/ext/sticker-response';
+import { TelegramUpdate } from '../../transports/telegram/ext/telegram-update';
+import { TextResponse } from '../../transports/telegram/ext/text-response';
+import { VideoResponse } from '../../transports/telegram/ext/video-response';
+import { VoiceResponse } from '../../transports/telegram/ext/voice-response';
+import { TelegramServerTransport } from '../../transports/telegram/telegram.constants';
+import { IMessage } from '../../transports/telegram/telegram.types';
 import { AddReplyCommand } from './commands/add-reply.command';
 import { RemoveReplyCommand } from './commands/remove-reply.command';
 import { GetReplyQuery } from './queries/get-reply.query';

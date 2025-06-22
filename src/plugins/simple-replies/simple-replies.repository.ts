@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Optional } from '../@types/base';
+import { Optional } from '../../@types/base';
 import { Reply } from './schemas/reply.schema';
 import { IReply, IReplyRepository } from './simple-replies.types';
 

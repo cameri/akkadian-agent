@@ -1,10 +1,10 @@
 import { Logger } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { Test, TestingModule } from '@nestjs/testing';
-import { ReactionResponse } from '../transports/telegram/ext/reaction-response';
-import { TelegramUpdate } from '../transports/telegram/ext/telegram-update';
-import { TextResponse } from '../transports/telegram/ext/text-response';
-import { IMessage } from '../transports/telegram/telegram.types';
+import { ReactionResponse } from '../../transports/telegram/ext/reaction-response';
+import { TelegramUpdate } from '../../transports/telegram/ext/telegram-update';
+import { TextResponse } from '../../transports/telegram/ext/text-response';
+import { IMessage } from '../../transports/telegram/telegram.types';
 import { AddReplyCommand } from './commands/add-reply.command';
 import { RemoveReplyCommand } from './commands/remove-reply.command';
 import { GetReplyQuery } from './queries/get-reply.query';

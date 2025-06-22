@@ -2,7 +2,7 @@ import { Given, Then, When } from '@cucumber/cucumber';
 import { CommandBus } from '@nestjs/cqrs';
 import { HttpStatusCode } from 'axios';
 import assert from 'node:assert/strict';
-import { ReplyRepository } from '../../../src/simple-replies/simple-replies.repository';
+import { ReplyRepository } from '../../../src/plugins/simple-replies/simple-replies.repository';
 import { TestWorld } from './types';
 
 let repository: ReplyRepository;

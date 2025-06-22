@@ -1,13 +1,12 @@
 # TypeScript Instructions
 
 - Use TypeScript 5.8 or later.
-- Don't add comments to the code unless necessary.
+- Don't add comments within functions unless necessary.
 - Explicitly type function arguments, return values, and variables.
 - Prefer `type` over `interface` unless advanced features are needed.
-- Avoid `enum`; use `as const` with union types.
-- Use `readonly` for immutability.
+- Avoid `enum`; use object hashes with `as const` with union types.
 - Use optional chaining (`?.`) for nested properties.
-- Use nullish coalescing (`??`) for default values.
+- Use nullish coalescing (`??`) for default values instead of boolean OR (`||`).
 - Use ES6 module syntax for imports.
 - Group imports by standard libraries, third-party libraries, and local modules.
 - Use `kebab-case` for file names.
