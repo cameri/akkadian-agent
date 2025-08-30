@@ -3,7 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { CqrsModule } from '@nestjs/cqrs';
 import { DatabaseModule } from './database/database.module';
 import { InstrumentationModule } from './instrumentation/instrumentation.module';
-import { SimpleRepliesModule } from './plugins/simple-replies/simple-replies.module';
+import { PluginsModule } from './plugins/plugins.module';
 import { TelegramModule } from './transports/telegram/telegram.module';
 
 @Module({
@@ -16,7 +16,7 @@ import { TelegramModule } from './transports/telegram/telegram.module';
     DatabaseModule,
     CqrsModule.forRoot(),
     TelegramModule,
-    SimpleRepliesModule,
+    PluginsModule,
   ],
   controllers: [],
   providers: [],
