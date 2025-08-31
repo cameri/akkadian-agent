@@ -9,10 +9,10 @@ services:
       - path: .env
         required: true
     environment:
-      MONGODB_URI: mongodb://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@akkadian-mongo:${MONGODB_PORT}/${MONGODB_DATABASE}
-    depends_on:
-      akkadian-mongo:
-        condition: service_healthy
+      - MONGODB_URI
+    # depends_on:
+    #   akkadian-mongo:
+    #     condition: service_healthy
     volumes:
       - ./src:/app/src
       - ./nest-cli.json:/app/nest-cli.json

@@ -134,16 +134,29 @@ pnpm run lint:fix
 
 ## Project Structure
 
-```
-src/
-├── app.module.ts              # Main application module
-├── main.ts                    # Application entry point
-├── database/                  # Database configuration
-├── instrumentation/          # Logging and monitoring
-├── simple-replies/           # Reply handling functionality
-└── transports/              # Platform-specific implementations
-    ├── nostr/               # Nostr protocol integration
-    └── telegram/            # Telegram bot integration
+```plain
+├── .claude/                   # Claude AI agent configurations
+│   └── agents/               # Specialized agent definitions
+├── .github/                  # GitHub workflows and templates
+├── .husky/                   # Git hooks configuration
+├── .vscode/                  # VSCode workspace settings
+├── scripts/                  # Development and deployment scripts
+│   └── mongo/                # MongoDB utilities
+├── src/                      # Application source code
+│   ├── @types/               # TypeScript type definitions
+│   ├── database/             # Database configuration and setup
+│   ├── instrumentation/      # Logging and monitoring
+│   │   └── logging/          # Logging infrastructure
+│   ├── plugins/              # Business logic modules
+│   │   ├── factoids/         # Factoids plugin implementation
+│   │   └── simple-replies/   # Simple replies plugin
+│   ├── scheduling/           # Task scheduling utilities
+│   └── transports/           # Platform-specific implementations
+│       ├── nostr/            # Nostr protocol integration
+│       └── telegram/         # Telegram bot integration
+└── tests/                    # Test suites and configurations
+    ├── features/             # Cucumber feature files
+    └── step-definitions/     # Test step implementations
 ```
 
 ## Built With

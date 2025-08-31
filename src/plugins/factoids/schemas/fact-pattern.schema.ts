@@ -1,8 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IsDate, IsEnum, IsNumber, IsString } from 'class-validator';
 import { HydratedDocument } from 'mongoose';
-import type { IFactPattern } from '../factoids.types';
 import { FactPatternsCollectionName } from '../factoids.constants';
+import type { IFactPattern } from '../factoids.types';
 
 export type FactPatternDocument = HydratedDocument<FactPattern>;
 
@@ -49,4 +49,3 @@ export const FactPatternSchema = SchemaFactory.createForClass(FactPattern);
 
 // Indexes for performance
 FactPatternSchema.index({ patternType: 1, priority: -1 });
-FactPatternSchema.index({ pattern: 1 }, { unique: true });
