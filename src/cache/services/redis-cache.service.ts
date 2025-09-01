@@ -1,8 +1,8 @@
 import { Inject, Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { catchError, firstValueFrom, of, timeout } from 'rxjs';
-import { CACHE_TTL_SECONDS } from '../factoids.constants';
-import type { ICacheService } from '../factoids.types';
+import { CACHE_TTL_SECONDS } from '../cache.constants';
+import type { ICacheService } from '../cache.types';
 
 @Injectable()
 export class RedisCacheService implements ICacheService, OnModuleDestroy {
@@ -64,7 +64,6 @@ export class RedisCacheService implements ICacheService, OnModuleDestroy {
   ): Promise<void> {
     try {
       const serializedValue = JSON.stringify(value);
-
       await firstValueFrom(
         this.redisClient
           .send('setex', { key, seconds: ttlSeconds, value: serializedValue })

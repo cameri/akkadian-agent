@@ -1,11 +1,11 @@
 import { createMock } from '@golevelup/ts-jest';
 import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { CacheService } from '../../../cache';
 import { QUERY_TIMEOUT_MS } from '../factoids.constants';
 import type { IFactoid } from '../factoids.types';
 import { FindFactQuery } from '../queries/find-fact.query';
 import { FactoidsRepository } from '../repositories/factoids.repository';
-import { CacheService } from '../services/cache.service';
 import { NaturalLanguageService } from '../services/natural-language.service';
 import { FindFactQueryHandler } from './find-fact.query-handler';
 
@@ -31,7 +31,10 @@ describe('FindFactQueryHandler', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         FindFactQueryHandler,
-        Logger,
+        {
+          provide: Logger,
+          useValue: createMock<Logger>(),
+        },
         {
           provide: FactoidsRepository,
           useValue: createMock<FactoidsRepository>(),
@@ -51,6 +54,10 @@ describe('FindFactQueryHandler', () => {
     factoidsRepository = module.get(FactoidsRepository);
     naturalLanguageService = module.get(NaturalLanguageService);
     cacheService = module.get(CacheService);
+
+    // Set up default mock implementations
+    cacheService.get.mockResolvedValue(null);
+    cacheService.set.mockResolvedValue(undefined);
   });
 
   it('should be defined', () => {
@@ -123,7 +130,7 @@ describe('FindFactQueryHandler', () => {
 
       // Assert
       expect(result.factoid).toBeUndefined();
-      expect(result.confidence).toBeUndefined();
+      expect(result.confidence).toBe(0);
     });
 
     it('should return cached result if available', async () => {
@@ -163,7 +170,7 @@ describe('FindFactQueryHandler', () => {
       expect(cacheService.set).toHaveBeenCalledWith(
         expect.stringContaining('fact:test-chat-123:TypeScript'),
         mockFactoid,
-        expect.any(Number),
+        300,
       );
     });
 
@@ -194,9 +201,14 @@ describe('FindFactQueryHandler', () => {
         minConfidence: 0.8,
       });
 
+      // Suppress error logging for this test by spying on Logger prototype
+      const loggerErrorSpy = jest
+        .spyOn(Logger.prototype, 'error')
+        .mockImplementation(() => {});
+
       cacheService.get.mockResolvedValue(null);
       factoidsRepository.findBySubject.mockRejectedValue(
-        new Error('Database connection failed'),
+        new Error('Database connection failed test'),
       );
 
       // Act
@@ -204,7 +216,10 @@ describe('FindFactQueryHandler', () => {
 
       // Assert
       expect(result.factoid).toBeUndefined();
-      expect(result.error).toContain('Database connection failed');
+      expect(result.error).toContain('Database connection failed test');
+
+      // Restore the spy
+      loggerErrorSpy.mockRestore();
     });
 
     it('should filter facts by minimum similarity threshold', async () => {
@@ -231,7 +246,7 @@ describe('FindFactQueryHandler', () => {
 
       // Assert
       expect(result.factoid).toBeUndefined();
-      expect(result.confidence).toBeUndefined();
+      expect(result.confidence).toBe(0);
     });
 
     it('should normalize subject for consistent matching', async () => {

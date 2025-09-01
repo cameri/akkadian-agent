@@ -5,7 +5,7 @@ import { SearchFactsQuery } from '../queries/search-facts.query';
 import { SearchFactsQueryHandler } from './search-facts.query-handler';
 import { FactoidsRepository } from '../repositories/factoids.repository';
 import { NaturalLanguageService } from '../services/natural-language.service';
-import { CacheService } from '../services/cache.service';
+import { CacheService } from '../../../cache';
 import type { IFactoid } from '../factoids.types';
 import { QUERY_TIMEOUT_MS } from '../factoids.constants';
 

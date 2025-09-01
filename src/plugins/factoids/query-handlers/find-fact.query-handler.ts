@@ -4,7 +4,7 @@ import { FindFactQuery } from '../queries/find-fact.query';
 import type { FindFactQueryResult, IFactoid } from '../factoids.types';
 import { FactoidsRepository } from '../repositories/factoids.repository';
 import { NaturalLanguageService } from '../services/natural-language.service';
-import { CacheService } from '../services/cache.service';
+import { CacheService } from '../../../cache';
 import {
   FACT_CACHE_PREFIX,
   SimilarityAlgorithm,
@@ -27,7 +27,10 @@ export class FindFactQueryHandler
     try {
       const startTime = Date.now();
 
-      // Check cache first
+      // Normalize the subject for consistent matching
+      const normalizedSubject = this.naturalLanguageService.normalizeText(query.subject);
+
+      // Check cache first (use original subject for cache key to maintain user expectations)
       const cacheKey = `${FACT_CACHE_PREFIX}${query.chatId}:${query.subject}`;
       const cachedFactoid = await this.cacheService.get<IFactoid>(cacheKey);
 
@@ -47,7 +50,7 @@ export class FindFactQueryHandler
 
       if (exactMatch) {
         // Cache the result
-        await this.cacheService.set(cacheKey, exactMatch);
+        await this.cacheService.set(cacheKey, exactMatch, 300);
 
         const elapsed = Date.now() - startTime;
         this.logger.debug(
@@ -120,7 +123,7 @@ export class FindFactQueryHandler
     if (bestMatch) {
       // Cache the result
       const cacheKey = `${FACT_CACHE_PREFIX}${query.chatId}:${query.subject}`;
-      await this.cacheService.set(cacheKey, bestMatch);
+      await this.cacheService.set(cacheKey, bestMatch, 300);
 
       this.logger.debug(
         `Found similar match for "${query.subject}" -> "${bestMatch.subject}" (confidence: ${bestConfidence}) in ${elapsed}ms`,

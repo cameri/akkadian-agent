@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { CACHE_TTL_SECONDS } from '../factoids.constants';
-import type { ICacheService } from '../factoids.types';
+import { CACHE_TTL_SECONDS } from '../cache.constants';
+import type { ICacheService } from '../cache.types';
 
 interface CacheEntry<T> {
   value: T;
@@ -22,7 +22,6 @@ export class CacheService implements ICacheService {
 
   get<T>(key: string): Promise<T | null> {
     const entry = this.cache.get(key) as CacheEntry<T> | undefined;
-
     if (!entry) {
       return Promise.resolve(null);
     }
@@ -37,7 +36,6 @@ export class CacheService implements ICacheService {
 
   set<T>(key: string, value: T, ttlSeconds = CACHE_TTL_SECONDS): Promise<void> {
     const expiresAt = Date.now() + ttlSeconds * 1000;
-
     this.cache.set(key, {
       value,
       expiresAt,

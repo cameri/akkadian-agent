@@ -14,6 +14,7 @@ describe('CacheService', () => {
   });
 
   afterEach(() => {
+    service.onModuleDestroy();
     // Clear any timers to prevent interference between tests
     jest.clearAllTimers();
   });

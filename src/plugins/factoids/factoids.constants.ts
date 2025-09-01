@@ -18,7 +18,6 @@ export const simpleQuestionRegExp =
 // Performance thresholds
 export const QUERY_TIMEOUT_MS = 50;
 export const PROCESSING_TIMEOUT_MS = 100;
-export const CACHE_TTL_SECONDS = 300; // 5 minutes
 export const MAX_FACTS_PER_CHAT = 10000;
 
 // Pattern confidence thresholds

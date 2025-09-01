@@ -1,0 +1,12 @@
+{
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug",
+      "runtimeExecutable": "/home/cameri/.local/share/nvm/v23.11.1/bin/node",
+      "cwd": "${workspaceFolder}",
+      "args": []
+    }
+  ]
+}

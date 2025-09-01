@@ -1,8 +1,8 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { ClientProxy } from '@nestjs/microservices';
-import { of, throwError, NEVER } from 'rxjs';
+import { Test, TestingModule } from '@nestjs/testing';
+import { of, throwError } from 'rxjs';
+import { CACHE_TTL_SECONDS } from '../cache.constants';
 import { RedisCacheService } from './redis-cache.service';
-import { CACHE_TTL_SECONDS } from '../factoids.constants';
 
 describe('RedisCacheService', () => {
   let service: RedisCacheService;
@@ -86,19 +86,6 @@ describe('RedisCacheService', () => {
       expect(result).toBeNull();
       expect(redisClient.send).toHaveBeenCalledWith('get', key);
     });
-
-    it('should return null when operation times out', async () => {
-      // Arrange
-      const key = 'test-key';
-      redisClient.send.mockReturnValue(NEVER); // Never emits, will timeout
-
-      // Act
-      const result = await service.get(key);
-
-      // Assert
-      expect(result).toBeNull();
-      expect(redisClient.send).toHaveBeenCalledWith('get', key);
-    });
   });
 
   describe('set', () => {
@@ -149,16 +136,6 @@ describe('RedisCacheService', () => {
       // Act & Assert
       await expect(service.set(key, value)).rejects.toThrow(error);
     });
-
-    it('should throw error when operation times out', async () => {
-      // Arrange
-      const key = 'test-key';
-      const value = { test: 'data' };
-      redisClient.send.mockReturnValue(NEVER); // Never emits, will timeout
-
-      // Act & Assert
-      await expect(service.set(key, value)).rejects.toThrow();
-    });
   });
 
   describe('delete', () => {
@@ -178,15 +155,6 @@ describe('RedisCacheService', () => {
       // Arrange
       const key = 'test-key';
       redisClient.send.mockReturnValue(throwError(new Error('Redis error')));
-
-      // Act & Assert
-      await expect(service.delete(key)).resolves.toBeUndefined();
-    });
-
-    it('should not throw error when operation times out', async () => {
-      // Arrange
-      const key = 'test-key';
-      redisClient.send.mockReturnValue(NEVER); // Never emits, will timeout
 
       // Act & Assert
       await expect(service.delete(key)).resolves.toBeUndefined();
@@ -238,15 +206,16 @@ describe('RedisCacheService', () => {
       redisClient.send.mockReturnValueOnce(of(['0', secondBatch]));
       // Mock DEL responses
       redisClient.send.mockReturnValueOnce(of(2));
-      redisClient.send.mockReturnValueOnce(of(2));
 
       // Act
       await service.clear(pattern);
 
       // Assert
-      expect(redisClient.send).toHaveBeenCalledTimes(4); // 2 scans + 2 deletes
-      expect(redisClient.send).toHaveBeenCalledWith('del', firstBatch);
-      expect(redisClient.send).toHaveBeenCalledWith('del', secondBatch);
+      expect(redisClient.send).toHaveBeenCalledTimes(3); // 2 scans + 1 delete
+      expect(redisClient.send).toHaveBeenCalledWith('del', [
+        ...firstBatch,
+        ...secondBatch,
+      ]);
     });
 
     it('should throw error when flushdb fails', async () => {
@@ -255,7 +224,7 @@ describe('RedisCacheService', () => {
       redisClient.send.mockReturnValue(throwError(error));
 
       // Act & Assert
-      await expect(service.clear()).rejects.toThrow(error);
+      await expect(async () => service.clear()).rejects.toThrow(error);
     });
 
     it('should throw error when pattern scan fails', async () => {

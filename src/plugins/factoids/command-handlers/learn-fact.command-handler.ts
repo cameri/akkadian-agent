@@ -9,7 +9,7 @@ import {
 import type { LearnFactCommandResult } from '../factoids.types';
 import { ChatKnowledgeRepository } from '../repositories/chat-knowledge.repository';
 import { FactoidsRepository } from '../repositories/factoids.repository';
-import { CacheService } from '../services/cache.service';
+import { CacheService } from '../../../cache';
 import { NaturalLanguageService } from '../services/natural-language.service';
 
 @CommandHandler(LearnFactCommand)

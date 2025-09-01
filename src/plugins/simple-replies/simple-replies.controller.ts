@@ -192,7 +192,8 @@ export class SimpleRepliesController {
     @Ctx() _update: TelegramUpdate,
   ) {
     this.logger.log(
-      'received from %s: %s',
+      '[%s] %s: %s',
+      message.chat.title?.slice(0, 20),
       message.from?.first_name,
       message.text,
     );

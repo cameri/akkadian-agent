@@ -6,7 +6,7 @@ import { LearnFactCommandHandler } from './learn-fact.command-handler';
 import { FactoidsRepository } from '../repositories/factoids.repository';
 import { ChatKnowledgeRepository } from '../repositories/chat-knowledge.repository';
 import { NaturalLanguageService } from '../services/natural-language.service';
-import { CacheService } from '../services/cache.service';
+import { CacheService } from '../../../cache';
 import type { IFactoid } from '../factoids.types';
 import { RESPONSE_TEMPLATES } from '../factoids.constants';
 
