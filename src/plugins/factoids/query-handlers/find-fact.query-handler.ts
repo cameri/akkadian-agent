@@ -27,9 +27,6 @@ export class FindFactQueryHandler
     try {
       const startTime = Date.now();
 
-      // Normalize the subject for consistent matching
-      const normalizedSubject = this.naturalLanguageService.normalizeText(query.subject);
-
       // Check cache first (use original subject for cache key to maintain user expectations)
       const cacheKey = `${FACT_CACHE_PREFIX}${query.chatId}:${query.subject}`;
       const cachedFactoid = await this.cacheService.get<IFactoid>(cacheKey);

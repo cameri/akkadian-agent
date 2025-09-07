@@ -39,6 +39,9 @@ dependencies:
   '@nestjs/platform-express':
     specifier: ^11.0.1
     version: 11.0.1(@nestjs/common@11.0.16)(@nestjs/core@11.0.1)
+  '@nestjs/schedule':
+    specifier: ^4.1.2
+    version: 4.1.2(@nestjs/common@11.0.16)(@nestjs/core@11.0.1)
   '@types/ramda':
     specifier: ^0.30.2
     version: 0.30.2
@@ -48,6 +51,9 @@ dependencies:
   axios:
     specifier: 1.8.4
     version: 1.8.4
+  chrono-node:
+    specifier: ^2.8.4
+    version: 2.8.4
   class-transformer:
     specifier: ^0.5.1
     version: 0.5.1
@@ -60,6 +66,9 @@ dependencies:
   ioredis:
     specifier: ^5.7.0
     version: 5.7.0
+  luxon:
+    specifier: ^3.6.1
+    version: 3.6.1
   mongoose:
     specifier: ^8.13.0
     version: 8.13.0
@@ -119,6 +128,9 @@ devDependencies:
   '@types/jest':
     specifier: ^29.5.14
     version: 29.5.14
+  '@types/luxon':
+    specifier: ^3.7.1
+    version: 3.7.1
   '@types/node':
     specifier: ^22.10.7
     version: 22.10.7
@@ -770,7 +782,7 @@ packages:
       '@cucumber/messages': 27.0.2
       '@cucumber/query': 13.2.0(@cucumber/messages@27.0.2)
       '@teppeis/multimaps': 3.0.0
-      luxon: 3.6.1
+      luxon: 3.7.2
       xmlbuilder: 15.1.1
     dev: true
 
@@ -1895,6 +1907,18 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
+  /@nestjs/schedule@4.1.2(@nestjs/common@11.0.16)(@nestjs/core@11.0.1):
+    resolution: {integrity: sha512-hCTQ1lNjIA5EHxeu8VvQu2Ed2DBLS1GSC6uKPYlBiQe6LL9a7zfE9iVSK+zuK8E2odsApteEBmfAQchc8Hx0Gg==}
+    peerDependencies:
+      '@nestjs/common': ^8.0.0 || ^9.0.0 || ^10.0.0
+      '@nestjs/core': ^8.0.0 || ^9.0.0 || ^10.0.0
+    dependencies:
+      '@nestjs/common': 11.0.16(class-transformer@0.5.1)(class-validator@0.14.1)(file-type@20.5.0)(reflect-metadata@0.2.2)(rxjs@7.8.1)
+      '@nestjs/core': 11.0.1(@nestjs/common@11.0.16)(@nestjs/microservices@11.0.11)(@nestjs/platform-express@11.0.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)
+      cron: 3.2.1
+      uuid: 11.0.3
+    dev: false
+
   /@nestjs/schematics@11.0.0(chokidar@4.0.3)(typescript@5.7.3):
     resolution: {integrity: sha512-wts8lG0GfNWw3Wk9aaG5I/wcMIAdm7HjjeThQfUZhJxeIFT82Z3F5+0cYdHH4ii2pYQGiCSrR1VcuMwPiHoecg==}
     peerDependencies:
@@ -2383,6 +2407,14 @@ packages:
 
   /@types/json-schema@7.0.15:
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
+    dev: true
+
+  /@types/luxon@3.4.2:
+    resolution: {integrity: sha512-TifLZlFudklWlMBfhubvgqTXRzLDI5pCbGa4P8a3wPyUQSW+1xQ5eDsreP9DWHX3tjq1ke96uYG/nwundroWcA==}
+    dev: false
+
+  /@types/luxon@3.7.1:
+    resolution: {integrity: sha512-H3iskjFIAn5SlJU7OuxUmTEpebK6TKB8rxZShDslBMZJ5u9S//KM1sbdAisiSrqwLQncVjnpi2OK2J51h+4lsg==}
     dev: true
 
   /@types/methods@1.1.4:
@@ -3531,6 +3563,13 @@ packages:
     engines: {node: '>=6.0'}
     dev: true
 
+  /chrono-node@2.8.4:
+    resolution: {integrity: sha512-F+Rq88qF3H2dwjnFrl3TZrn5v4ZO57XxeQ+AhuL1C685So1hdUV/hT/q8Ja5UbmPYEZfx8VrxFDa72Dgldcxpg==}
+    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
+    dependencies:
+      dayjs: 1.11.18
+    dev: false
+
   /ci-info@3.9.0:
     resolution: {integrity: sha512-NIxF55hv4nSqQswkAeiOi1r83xy8JldOFDTWiug55KBu9Jnblncd2U6ViHmYgHf01TPZS77NJBhBMKdWj9HQMQ==}
     engines: {node: '>=8'}
@@ -3819,6 +3858,13 @@ packages:
     resolution: {integrity: sha512-dcKFX3jn0MpIaXjisoRvexIJVEKzaq7z2rZKxf+MSr9TkdmHmsU4m2lcLojrj/FHl8mk5VxMmYA+ftRkP/3oKQ==}
     dev: true
 
+  /cron@3.2.1:
+    resolution: {integrity: sha512-w2n5l49GMmmkBFEsH9FIDhjZ1n1QgTMOCMGuQtOXs5veNiosZmso6bQGuqOJSYAXXrG84WQFVneNk+Yt0Ua9iw==}
+    dependencies:
+      '@types/luxon': 3.4.2
+      luxon: 3.5.0
+    dev: false
+
   /cross-spawn@7.0.6:
     resolution: {integrity: sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==}
     engines: {node: '>= 8'}
@@ -3847,6 +3893,10 @@ packages:
   /dateformat@4.6.3:
     resolution: {integrity: sha512-2P0p0pFGzHS5EMnhdxQi7aJN+iMheud0UhG4dlE1DLAlvL8JHjJJTX/CSm4JXwV0Ka5nGk3zC5mcb5bUQUxxMA==}
     dev: true
+
+  /dayjs@1.11.18:
+    resolution: {integrity: sha512-zFBQ7WFRvVRhKcWoUh+ZA1g2HVgUbsZm9sbddh8EC5iv93sui8DVVz1Npvz+r6meo9VKfa8NyLWBsQK1VvIKPA==}
+    dev: false
 
   /debug@2.6.9:
     resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==}
@@ -5926,8 +5976,18 @@ packages:
     engines: {node: '>=12'}
     dev: true
 
+  /luxon@3.5.0:
+    resolution: {integrity: sha512-rh+Zjr6DNfUYR3bPwJEnuwDdqMbxZW7LOQfUN4B54+Cl+0o5zaU9RJ6bcidfDtC1cWCZXQ+nvX8bf6bAji37QQ==}
+    engines: {node: '>=12'}
+    dev: false
+
   /luxon@3.6.1:
     resolution: {integrity: sha512-tJLxrKJhO2ukZ5z0gyjY1zPh3Rh88Ej9P7jNrZiHMUXHae1yvI2imgOZtL1TO8TW6biMMKfTtAOoEJANgtWBMQ==}
+    engines: {node: '>=12'}
+    dev: false
+
+  /luxon@3.7.2:
+    resolution: {integrity: sha512-vtEhXh/gNjI9Yg1u4jX/0YVPMvxzHuGgCm6tC5kZyb08yjGWGnqAjGJvcXbqQR2P3MyMEFnRbpcdFS6PBcLqew==}
     engines: {node: '>=12'}
     dev: true
 
@@ -8088,6 +8148,11 @@ packages:
     resolution: {integrity: sha512-8XkAphELsDnEGrDxUOHB3RGvXz6TeuYSGEZBOjtTtPm2lwhGBjLgOzLHB63IUWfBpNucQjND6d3AOudO+H3RWQ==}
     hasBin: true
     dev: true
+
+  /uuid@11.0.3:
+    resolution: {integrity: sha512-d0z310fCWv5dJwnX1Y/MncBAqGMKEzlBb1AOf7z9K8ALnd0utBX/msg/fA0+sbyN1ihbMsLhrBlnl1ak7Wa0rg==}
+    hasBin: true
+    dev: false
 
   /uuid@11.0.5:
     resolution: {integrity: sha512-508e6IcKLrhxKdBbcA2b4KQZlLVp2+J5UwQ6F7Drckkc5N9ZJwFa4TgWtsww9UG8fGHbm6gbV19TdM5pQ4GaIA==}
